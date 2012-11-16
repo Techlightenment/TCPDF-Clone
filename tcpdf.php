@@ -319,6 +319,20 @@ class TCPDF {
 	protected $y;
 
 	/**
+	 * data relative to image to be positionned on page.
+	 * @public
+	 * @author Fred
+	 */
+	public $imgToken = array();
+
+	/**
+	 * data relative to header offset on page.
+	 * @public
+	 * @author Fred
+	 */
+	public $headerOffset = array();
+	
+	/**
 	 * Height of last cell printed.
 	 * @protected
 	 */
@@ -4325,11 +4339,14 @@ class TCPDF {
 			// print an ending header line
 			$this->SetLineStyle(array('width' => 0.85 / $this->k, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => $headerdata['line_color']));
 			$this->SetY((2.835 / $this->k) + max($imgy, $this->y));
+			
 			if ($this->rtl) {
 				$this->SetX($this->original_rMargin);
 			} else {
 				$this->SetX($this->original_lMargin);
 			}
+			$this->headerOffset = array($this->x, $this->y);
+			
 			$this->Cell(($this->w - $this->original_lMargin - $this->original_rMargin), 0, '', 'T', 0, 'C');
 			$this->endTemplate();
 		}
@@ -23683,7 +23700,24 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 		}
 		unset($dom);
 	}
-
+	
+	/**
+	 * get information about imges token on page
+	 * @public
+	 * @author Fred
+	 */
+	public function getImgToken() {
+		return $this->imgToken;
+	}
+	/**
+	 * get information margin data influencing images positionning
+	 * @public
+	 * @author Fred
+	 */
+	public function getHeaderOffsets() {
+		return $this->headerOffset;
+	}
+	
 	/**
 	 * Process opening tags.
 	 * @param $dom (array) html dom array
@@ -23872,6 +23906,9 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 					}
 					$prevy = $this->y;
 					$xpos = $this->x;
+					if('blank.png' == basename($tag['attribute']['src'])){
+						$this->imgToken[] = array($this->x, $this->y, $tag['attribute']['src']);
+					}
 					$imglink = '';
 					if (isset($this->HREF['url']) AND !$this->empty_string($this->HREF['url'])) {
 						$imglink = $this->HREF['url'];
