@@ -23907,7 +23907,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 					$prevy = $this->y;
 					$xpos = $this->x;
 					if('blank.png' == basename($tag['attribute']['src'])){
-						$this->imgToken[] = array($this->x, $this->y, $tag['attribute']['src']);
+						$this->imgToken[] = array($this->x, $this->y, $this->page);
 					}
 					$imglink = '';
 					if (isset($this->HREF['url']) AND !$this->empty_string($this->HREF['url'])) {
